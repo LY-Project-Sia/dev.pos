@@ -1,0 +1,2 @@
+import 'dotenv/config';import fs from 'node:fs';import path from 'node:path';import pg from 'pg';import {fileURLToPath} from 'node:url';
+const dir=path.resolve(path.dirname(fileURLToPath(import.meta.url)),'../sql');const db=new pg.Client({connectionString:process.env.DATABASE_URL});await db.connect();try{for(const f of fs.readdirSync(dir).filter(x=>x.endsWith('.sql')).sort()){await db.query(fs.readFileSync(path.join(dir,f),'utf8'));console.log('Applied',f)}}finally{await db.end()}
