@@ -44,7 +44,7 @@ Open `http://localhost:5173` and sign in with the owner credentials you seeded. 
 
 All amounts use Philippine pesos (PHP / ₱), with values stored internally as integer centavos. The receipt template is formatted for 80 mm thermal paper and can be printed through the browser. Store name, address, phone, email, HTTPS logo URL, and receipt footer are editable under Settings by owners/managers. Completed sale amounts remain immutable.
 
-After downloading this branch, run `npm.cmd install`, `npm.cmd run migrate`, and `npm.cmd run seed` in the `server` folder. The seed command creates the initial owner account if missing; it does **not** reset an existing owner password. If login fails, open `http://localhost:4000/api/health` and read the backend terminal for the precise database error. Never share `.env` files or credentials.
+After downloading this branch, run `npm.cmd install`, `npm.cmd run migrate`, and `npm.cmd run seed` in the `server` folder. The seed command creates the initial owner account if missing; it does **not** reset an existing owner password unless you temporarily set `ADMIN_RESET_PASSWORD=true` in your private `server/.env`, rerun `npm.cmd run seed`, then remove that setting. If login fails, open `http://localhost:4000/api/health` and read the backend terminal for the precise database error. Never share `.env` files or credentials.
 
 To enable optional customer receipt emails, configure `SMTP_HOST`, `SMTP_PORT`, `SMTP_USER`, `SMTP_PASS`, and `SMTP_FROM` in `server/.env` using your email provider's SMTP settings. Without SMTP, sales and printing still work, but email delivery will report that it is not configured. Test with dummy transactions before use. A branded HTML receipt is emailed to customers who supply their email address.
 
