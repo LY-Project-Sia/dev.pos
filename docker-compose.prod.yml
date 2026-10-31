@@ -1,0 +1,50 @@
+services:
+  db:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: courtflow
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?Set POSTGRES_PASSWORD in root .env}
+      POSTGRES_DB: courtflow
+    volumes:
+      - courtflow_prod_db:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U courtflow -d courtflow"]
+      interval: 5s
+      retries: 12
+  migrate:
+    build: ./server
+    environment:
+      DATABASE_URL: ${DATABASE_URL:?Set DATABASE_URL for the db service}
+    command: ["node","src/migrate.js"]
+    depends_on:
+      db:
+        condition: service_healthy
+    restart: "no"
+  api:
+    build: ./server
+    restart: unless-stopped
+    environment:
+      DATABASE_URL: ${DATABASE_URL:?Set DATABASE_URL for the db service}
+      PORT: 4000
+      NODE_ENV: production
+      APP_ORIGIN: ${APP_ORIGIN:-http://localhost:8080}
+      SESSION_HOURS: ${SESSION_HOURS:-12}
+      MAIL_PROVIDER: ${MAIL_PROVIDER:-brevo}
+      SMTP_HOST: ${SMTP_HOST:-}
+      SMTP_PORT: ${SMTP_PORT:-587}
+      SMTP_USER: ${SMTP_USER:-}
+      SMTP_PASS: ${SMTP_PASS:-}
+      SMTP_FROM: ${SMTP_FROM:-}
+    depends_on:
+      migrate:
+        condition: service_completed_successfully
+  web:
+    build: .
+    restart: unless-stopped
+    ports:
+      - "127.0.0.1:8080:80"
+    depends_on:
+      - api
+volumes:
+  courtflow_prod_db:
