@@ -57,3 +57,12 @@ For **Brevo transactional email**, create an account at https://www.brevo.com/, 
 - HTTPS, production packaging, cloud replication, multi-device network resilience and regulatory review
 
 The repository is public. Never commit passwords, `.env` files or real customer records.
+
+## Personal Outlook / Hotmail OAuth2 receipts
+
+1. Register an application at https://entra.microsoft.com/ with **personal Microsoft accounts** supported. Enable **public client flows** (device-code sign-in). Microsoft may restrict app registration for some personal accounts; an eligible Azure/Entra account may be required.
+2. Copy its **Application (client) ID** into your private `server/.env` as `OUTLOOK_CLIENT_ID`. Set `MAIL_PROVIDER=outlook`, `SMTP_USER=youraddress@outlook.com`, `SMTP_FROM=youraddress@outlook.com`. No Outlook password is needed. `SMTP_PASS` is unused for Outlook.
+3. From the `server` folder run `npm.cmd run connect:outlook`. Follow the displayed Microsoft device sign-in instructions yourself. The program stores tokens only in `server/.outlook-oauth.json`, which is gitignored. Never share or commit this file, the device code, or tokens.
+4. Restart the API, sign in to CourtFlow, use **Settings → Test email connection**, and send a test receipt to an inbox you control.
+
+The app requests delegated `https://outlook.office.com/SMTP.Send` and `offline_access` scopes. Refresh tokens can be revoked; reconnect if authorization expires. Outlook consumer sending limits apply. For higher-volume production receipts, a transactional email service is preferable.
