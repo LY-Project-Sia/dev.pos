@@ -1,0 +1,31 @@
+name: CourtFlow checks
+on:
+  push:
+    branches: [main, feature/receipts-inventory-20261031]
+  pull_request:
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Install frontend dependencies
+        run: npm install --no-audit --no-fund
+      - name: Typecheck and build frontend
+        run: npm run build
+      - name: Install API dependencies
+        working-directory: server
+        run: npm install --no-audit --no-fund
+      - name: Syntax-check backend
+        working-directory: server
+        run: |
+          for file in src/*.js; do node --check "$file"; done
+      - name: Check Docker Compose
+        run: docker compose -f docker-compose.prod.yml config --quiet
+        env:
+          POSTGRES_PASSWORD: ci-placeholder-not-real
+          DATABASE_URL: postgres://courtflow:ci-placeholder-not-real@db:5432/courtflow
+          ADMIN_EMAIL: owner@example.com
+          ADMIN_PASSWORD: ci-placeholder-not-real
