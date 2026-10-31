@@ -27,3 +27,14 @@ If the database password contains URL-reserved characters, URL-encode it in `DAT
 ## Current limitations
 
 Cash sales, products, shifts and basic equipment rentals use the API. Cashier accounts require admin tooling, rentals do not yet settle payment or deposits, returns and refunds are incomplete, receipt printing is not implemented, and cloud synchronization is not complete. No production deployment has been tested.
+
+
+## Updated branch, receipts, and Docker local deployment
+
+**Important:** The previous Windows installation may have only `001_init.sql`. Download the `feature/receipts-inventory-20261031` branch and preserve the existing private `.env` files and database volume. In the updated server folder run `npm.cmd install` and `npm.cmd run migrate` to apply the receipt, settings, and email log migrations. Build the updated frontend with `npm.cmd run build` in the project root.
+
+For Brevo use `MAIL_PROVIDER=brevo`, `SMTP_HOST=smtp-relay.brevo.com`, `SMTP_PORT=587`, and your private `SMTP_USER`, `SMTP_PASS` and verified `SMTP_FROM` in `server/.env`. Restart the API. Enter customer email at checkout for automatic receipts; Reports provides Print and Email copy actions. Only sales with a stored customer email can be emailed again.
+
+An isolated local Docker deployment is defined in `docker-compose.prod.yml`. It uses a **new** volume `courtflow_prod_db`, not the existing development database. In a private root `.env` configure `POSTGRES_PASSWORD`, `DATABASE_URL=postgres://courtflow:URL_ENCODED_PASSWORD@db:5432/courtflow`, `APP_ORIGIN=http://localhost:8080`, and the Brevo SMTP variables. Run `docker compose -f docker-compose.prod.yml up --build -d`. Seed the new database owner with the private `ADMIN_EMAIL` and `ADMIN_PASSWORD` environment values, then open http://localhost:8080. Never put secrets in GitHub or shell history.
+
+Before any real use, check GitHub Actions, login, stock changes, cash sales, rental return, 80mm printing, email arrival, CSV exports, and backup restoration. Docker local deployment does **not** include HTTPS/public hosting or production certification.
