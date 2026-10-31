@@ -4,7 +4,7 @@
 
 CourtFlow is a React/TypeScript frontend with an Express/PostgreSQL backend. The interface now uses authenticated API records for inventory, cash sales, shifts, equipment rentals and reports instead of browser-only demo data.
 
-**Development status: not production ready or officially certified.** Payment reconciliation, secure browser sessions, staff administration, receipts, refunds, deposits, reliable sync, automated testing, backups and compliance verification remain outstanding. Do not process real customer transactions yet.
+**Development status: not production ready or officially certified.** Payment reconciliation, secure browser sessions, staff administration, refunds, deposits, reliable sync, automated testing, backups and compliance verification remain outstanding. Do not process real customer transactions yet.
 
 ## Run on Windows 11
 
@@ -40,10 +40,18 @@ Open `http://localhost:5173` and sign in with the owner credentials you seeded. 
 - Owner/manager daily totals, sales history and CSV export
 - Responsive desktop and mobile layout, PHP currency and Manila time display
 
+## Receipt and login setup (development)
+
+All amounts use Philippine pesos (PHP / ₱), with values stored internally as integer centavos. The receipt template is formatted for 80 mm thermal paper and can be printed through the browser. Store name, address, phone, email, HTTPS logo URL, and receipt footer are editable under Settings by owners/managers. Completed sale amounts remain immutable.
+
+After downloading this branch, run `npm.cmd install`, `npm.cmd run migrate`, and `npm.cmd run seed` in the `server` folder. The seed command creates the initial owner account if missing; it does **not** reset an existing owner password. If login fails, open `http://localhost:4000/api/health` and read the backend terminal for the precise database error. Never share `.env` files or credentials.
+
+To enable optional customer receipt emails, configure `SMTP_HOST`, `SMTP_PORT`, `SMTP_USER`, `SMTP_PASS`, and `SMTP_FROM` in `server/.env` using your email provider's SMTP settings. Without SMTP, sales and printing still work, but email delivery will report that it is not configured. Test with dummy transactions before use. A branded HTML receipt is emailed to customers who supply their email address.
+
 ## Next steps before launch
 
 - Full staff account management, secure HttpOnly cookie sessions, device registration and permission audit
-- Receipts, printers, cash reconciliation, refunds, rental payment and deposit settlement
+- Printer compatibility, cash reconciliation, refunds, rental payment and deposit settlement
 - Product variants and tube-to-piece inventory conversions
 - Automated build, integration and concurrency testing, database backup/restore
 - HTTPS, production packaging, cloud replication, multi-device network resilience and regulatory review
