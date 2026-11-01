@@ -1,0 +1,1 @@
+CREATE TABLE IF NOT EXISTS receipt_email_log(id bigserial PRIMARY KEY,sale_id uuid NOT NULL REFERENCES sales(id),recipient text NOT NULL,status text NOT NULL CHECK(status IN ('accepted','failed')),created_at timestamptz NOT NULL DEFAULT now());

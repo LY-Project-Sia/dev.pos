@@ -7,7 +7,8 @@
     "start": "node src/server.js",
     "dev": "node --watch src/server.js",
     "migrate": "node src/migrate.js",
-    "seed": "node src/seed-admin.js"
+    "seed": "node src/seed-admin.js",
+    "connect:outlook": "node src/connect-outlook.js"
   },
   "dependencies": {
     "express": "^4.21.2",
@@ -16,6 +17,7 @@
     "helmet": "^8.0.0",
     "cors": "^2.8.5",
     "express-rate-limit": "^7.5.0",
-    "dotenv": "^16.4.7"
+    "dotenv": "^16.4.7",
+    "nodemailer": "^10.3.1"
   }
 }
